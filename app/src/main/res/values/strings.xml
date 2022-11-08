@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">EasyMeet</string>
+    <string name="login">Login to your Account</string>
+    <string name="register">Create your Account</string>
+    <string name="LoginOptionsText">Or Sign in with</string>
+    <string name="RegistrationOptionsText">Or Sign up with</string>
+    <string name="navigateToRegister">Don\'t have an account?</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="signIn">Sign In</string>
+    <string name="signUp">Sign Up</string>
+    <string name="image">Image</string>
+    <string name="eventName">Event Name</string>
+    <string name="eventDescription">Event Description</string>
+    <string name="eventPlace">Event Place</string>
+    <string name="addDate">Add Dates</string>
+    <string name="createEvent">Create Event</string>
+    <string name="attendingEvents">Attending Events</string>
+    <string name="attendingEventDesc">Find the events below you will be participating.</string>
+    <string name="hostingEvent">Hosting Events</string>
+    <string name="hostingEventDesc">Find the events below created by you.</string>
+    <string name="addAttendance">Add Attendance</string>
+    <string name="name">Name</string>
+    <string name="comments">Comments</string>
+    <string name="schedule">Schedule Dates</string>
+    <string name="save">Save</string>
+</resources>
