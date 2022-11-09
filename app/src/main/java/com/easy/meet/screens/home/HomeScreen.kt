@@ -29,7 +29,7 @@ import com.easy.meet.navigation.bottomNavigation.bottomNavigationItems
 
 @ExperimentalComposeUiApi
 @Composable
-fun HomeScreen(nvController : NavController) {
+fun HomeScreen(nvController: NavController) {
 
     val navController = rememberNavController()
 
@@ -65,7 +65,7 @@ fun HomeScreen(nvController : NavController) {
             },
             backgroundColor = colorResource(id = R.color.smoky_white)
         ) {
-            BottomNavigations(navController,nvController)
+            BottomNavigations(navController, nvController)
         }
     }
 }
@@ -94,7 +94,9 @@ fun BottomNav(navController: NavController) {
                             imageVector = screen.icon,
                             contentDescription = "",
                             modifier = Modifier.size(35.dp),
-                            tint = if(selected) colorResource(id = R.color.dark_green) else Color.Gray.copy(alpha = 0.4f)
+                            tint = if (selected) colorResource(id = R.color.dark_green) else Color.Gray.copy(
+                                alpha = 0.4f
+                            )
                         )
                     }
                 },
@@ -103,7 +105,9 @@ fun BottomNav(navController: NavController) {
                         Text(
                             text = it,
                             style = MaterialTheme.typography.caption,
-                            color = if(selected) colorResource(id = R.color.dark_green) else Color.Gray.copy(alpha = 0.4f)
+                            color = if (selected) colorResource(id = R.color.dark_green) else Color.Gray.copy(
+                                alpha = 0.4f
+                            )
                         )
                     }
                 },

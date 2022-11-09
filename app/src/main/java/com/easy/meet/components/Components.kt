@@ -1,11 +1,13 @@
 package com.easy.meet.components
 
 import android.app.DatePickerDialog
+import android.os.Build
 import android.widget.DatePicker
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +19,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -34,13 +37,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.easy.meet.R
 import com.easy.meet.ui.theme.ColorPrimary
 import com.easy.meet.ui.theme.ColorPrimaryDark
+import com.squaredem.composecalendar.ComposeCalendar
+import java.time.LocalDate
 import java.util.*
 
 @Composable
@@ -279,8 +283,10 @@ fun CreateChips(text: String) {
                 color = colorResource(id = R.color.smoky_white)
             )
     ) {
-        Row(modifier = Modifier.height(40.dp),
-            verticalAlignment = CenterVertically) {
+        Row(
+            modifier = Modifier.height(40.dp),
+            verticalAlignment = CenterVertically
+        ) {
             Text(
                 text = text,
                 modifier = Modifier
@@ -312,7 +318,7 @@ fun CreateChips(text: String) {
 @Composable
 fun ShowChipGroup(chipList: MutableList<String>) {
     LazyVerticalGrid(
-        cells = GridCells.Adaptive(minSize = 100.dp),
+        columns = GridCells.Adaptive(minSize = 100.dp),
         modifier = Modifier.fillMaxWidth(0.90f)
     ) {
         items(chipList.size) { chipDate ->
@@ -380,13 +386,15 @@ fun DatePickerView() {
 }
 
 @Composable
-fun BorderButton(modifier: Modifier,
-                 text : String,
-                 onClick: () -> Unit) {
+fun BorderButton(
+    modifier: Modifier,
+    text: String,
+    onClick: () -> Unit
+) {
     Button(
         onClick = {
             onClick.invoke()
-        },elevation =  ButtonDefaults.elevation(
+        }, elevation = ButtonDefaults.elevation(
             defaultElevation = 5.dp,
             pressedElevation = 10.dp,
             disabledElevation = 0.dp
@@ -395,31 +403,35 @@ fun BorderButton(modifier: Modifier,
         border = BorderStroke(1.dp, colorResource(id = R.color.dark_green)),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.dark_green))
     ) {
-        Text(text = text,
+        Text(
+            text = text,
             color = colorResource(id = R.color.dark_green),
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp
-            )
+        )
     }
 }
 
 @Composable
-fun ShowTitle(text : String,description : String){
-    Column(modifier = Modifier
-        .padding(10.dp)
-        .padding(2.dp)
-        .wrapContentHeight(),
+fun ShowTitle(text: String, description: String) {
+    Column(
+        modifier = Modifier
+            .padding(10.dp)
+            .padding(2.dp)
+            .wrapContentHeight(),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.Start
     ) {
-        Text(text = text,
+        Text(
+            text = text,
             modifier = Modifier.padding(1.dp),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = ColorPrimary
         )
         Spacer(modifier = Modifier.height(10.dp))
-        Text(text = description,
+        Text(
+            text = description,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color.Gray
@@ -428,41 +440,49 @@ fun ShowTitle(text : String,description : String){
 }
 
 @Composable
-fun ListLayout(eventTitle : String,
-               dateCreated : String,
-               eventPlace : String,
-               eventDate : String?,
-               eventStatus : String,
-               onClick: () -> Unit
-){
-    Card(modifier = Modifier
-        .padding(5.dp)
-        .padding(5.dp)
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .clickable { onClick.invoke() },
+fun ListLayout(
+    eventTitle: String,
+    dateCreated: String,
+    eventPlace: String,
+    eventDate: String?,
+    eventStatus: String,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .padding(5.dp)
+            .padding(5.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .clickable { onClick.invoke() },
         elevation = 10.dp,
         backgroundColor = Color.White
     ) {
-        Column(modifier = Modifier
-            .padding(2.dp)
-            .padding(2.dp)) {
-            Row(modifier = Modifier
+        Column(
+            modifier = Modifier
                 .padding(2.dp)
-                .padding(2.dp)) {
-              Text(text = eventTitle,
-                  fontWeight = FontWeight.Bold,
-                  fontSize = 18.sp,
-                  maxLines = 1,
-                  textAlign = TextAlign.Start,
-                  color = Color.Black,
-                  modifier = Modifier
-                      .padding(2.dp)
-                      .padding(2.dp)
-                      .fillMaxWidth(0.7f)
-                  )
+                .padding(2.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(2.dp)
+                    .padding(2.dp)
+            ) {
+                Text(
+                    text = eventTitle,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    maxLines = 1,
+                    textAlign = TextAlign.Start,
+                    color = Color.Black,
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .padding(2.dp)
+                        .fillMaxWidth(0.7f)
+                )
 
-                Text(text = dateCreated,
+                Text(
+                    text = dateCreated,
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp,
                     maxLines = 1,
@@ -474,33 +494,45 @@ fun ListLayout(eventTitle : String,
                 )
             }
 
-            Row (modifier = Modifier
-                .padding(2.dp)
-                .padding(2.dp)){
+            Row(
+                modifier = Modifier
+                    .padding(2.dp)
+                    .padding(2.dp)
+            ) {
 
-                ShowImageWithText(Icons.Default.LocationOn,eventPlace)
+                ShowImageWithText(Icons.Default.LocationOn, eventPlace)
 
                 Spacer(modifier = Modifier.width(10.dp))
 
-                Card(modifier = Modifier.padding(1.dp).padding(1.dp),
-                    border = BorderStroke(width = 1.dp, color = if(eventStatus == "Confirmed") Color.Green else Color.Red)) {
-                    Text(text = eventStatus,
+                Card(
+                    modifier = Modifier
+                        .padding(1.dp)
+                        .padding(1.dp),
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = if (eventStatus == "Confirmed") Color.Green else Color.Red
+                    )
+                ) {
+                    Text(
+                        text = eventStatus,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp,
                         maxLines = 1,
                         textAlign = TextAlign.Center,
-                        color = if(eventStatus == "Confirmed") Color.Green else Color.Red,
+                        color = if (eventStatus == "Confirmed") Color.Green else Color.Red,
                         modifier = Modifier
                             .padding(2.dp)
                             .padding(2.dp)
                     )
                 }
             }
-            Row (modifier = Modifier
-                .padding(2.dp)
-                .padding(2.dp)){
+            Row(
+                modifier = Modifier
+                    .padding(2.dp)
+                    .padding(2.dp)
+            ) {
                 if (eventDate != null) {
-                    ShowImageWithText(Icons.Default.DateRange,eventDate)
+                    ShowImageWithText(Icons.Default.DateRange, eventDate)
                 }
             }
 
@@ -509,16 +541,18 @@ fun ListLayout(eventTitle : String,
 }
 
 @Composable
-fun ShowImageWithText(image : ImageVector,text:String){
-    Row(modifier = Modifier
-        .fillMaxWidth(0.65f)
-        .padding(2.dp)
-        .padding(2.dp),
+fun ShowImageWithText(image: ImageVector, text: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(0.65f)
+            .padding(2.dp)
+            .padding(2.dp),
         verticalAlignment = CenterVertically,
         horizontalArrangement = Arrangement.Start
 
-        ) {
-        Icon(imageVector = image,
+    ) {
+        Icon(
+            imageVector = image,
             contentDescription = null,
             modifier = Modifier
                 .size(20.dp),
@@ -527,7 +561,8 @@ fun ShowImageWithText(image : ImageVector,text:String){
 
         Spacer(modifier = Modifier.width(5.dp))
 
-        Text(text = text,
+        Text(
+            text = text,
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
             maxLines = 1,
@@ -540,7 +575,7 @@ fun ShowImageWithText(image : ImageVector,text:String){
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ShowButtonIcons(image: ImageVector){
+fun ShowButtonIcons(image: ImageVector) {
     CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
         IconButton(
             modifier = Modifier
@@ -549,13 +584,32 @@ fun ShowButtonIcons(image: ImageVector){
                 .background(
                     ColorPrimary
                 ),
-            onClick = {  }) {
+            onClick = { }) {
             Icon(
                 imageVector = image,
                 contentDescription = null,
                 tint = Color.White
             )
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun DatePickerCompose(onDone : (String) -> Unit) {
+    val showDialog = rememberSaveable { mutableStateOf(false) }
+
+    if (showDialog.value) {
+        ComposeCalendar(
+            onDone = {
+                showDialog.value = false
+                val date = "${it.dayOfMonth}/${it.month}/${it.year}"
+                onDone(date)
+            },
+            onDismiss = {
+                showDialog.value = false
+            }
+        )
     }
 }
 

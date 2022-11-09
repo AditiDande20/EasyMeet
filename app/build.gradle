@@ -5,6 +5,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'kotlin-parcelize'
 
 }
 
@@ -13,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId "com.easy.meet"
-        minSdk 21
+        minSdk 26
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -101,25 +102,9 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
 
-    // Coil
-    implementation("io.coil-kt:coil-compose:2.1.0")
+    //Compose Calender
+    implementation 'com.squaredem:composecalendar:1.0.0'
 
-    // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-
-    // OkHttp
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
-
-    // JSON Converter
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-
-    //Room
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
-
-    // To use Kotlin annotation processing tool (kapt) MUST HAVE!
-    kapt("androidx.room:room-compiler:$room_version")
-    implementation "androidx.room:room-ktx:$room_version"
 
 
 }

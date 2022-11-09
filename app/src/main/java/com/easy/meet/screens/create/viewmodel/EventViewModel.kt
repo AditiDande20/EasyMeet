@@ -1,12 +1,10 @@
 package com.easy.meet.screens.create.viewmodel
 
+import android.content.Context
 import android.net.Uri
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.easy.meet.models.Event
-import com.easy.meet.screens.create.repository.EventRepository
 import com.easy.meet.utils.Constant
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
@@ -18,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class EventViewModel @Inject constructor(private val eventRepository: EventRepository) :
+class EventViewModel @Inject constructor(val context: Context) :
     ViewModel() {
 
     private val _state = MutableStateFlow(Long.MIN_VALUE)
@@ -28,10 +26,8 @@ class EventViewModel @Inject constructor(private val eventRepository: EventRepos
 
     fun insertEvent(event: Event) {
         viewModelScope.launch {
-            _state.value = eventRepository.insertEvent(event)
-            Log.e("Aditi===>", "eventRepository event id after insert :: ${_state.value}")
+
         }
-        Log.e("Aditi===>", "eventRepository event id after viewModelScope :: ${_state.value}")
     }
 
 

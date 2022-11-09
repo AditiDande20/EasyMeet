@@ -21,7 +21,7 @@ fun BottomNavigations(navController: NavHostController, nvController: NavControl
         NavHost(navController, startDestination = it) {
 
             composable(BottomNavigationScreens.Hosting.route) {
-                UpcomingHostingEventScreen(navController = navController,nvController)
+                UpcomingHostingEventScreen(navController = navController, nvController)
             }
             BottomNavigationScreens.Attending.route?.let { it1 ->
                 composable(it1) {

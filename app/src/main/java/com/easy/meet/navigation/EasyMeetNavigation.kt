@@ -9,13 +9,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.easy.meet.screens.addAttendance.AddAttendanceScreen
 import com.easy.meet.screens.attending.UpcomingAttendingEventsScreen
+import com.easy.meet.screens.authentication.LoginScreen
+import com.easy.meet.screens.authentication.viewmodel.AuthenticationViewModel
 import com.easy.meet.screens.create.CreateEventScreen
+import com.easy.meet.screens.create.viewmodel.EventViewModel
 import com.easy.meet.screens.home.HomeScreen
 import com.easy.meet.screens.hosting.detail.EventDetailScreen
 import com.easy.meet.screens.hosting.list.UpcomingHostingEventScreen
-import com.easy.meet.screens.authentication.LoginScreen
-import com.easy.meet.screens.authentication.viewmodel.AuthenticationViewModel
-import com.easy.meet.screens.create.viewmodel.EventViewModel
 import com.easy.meet.screens.splash.SplashScreen
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -50,7 +50,7 @@ fun EasyMeetNavigation(isBottomNavigation: Boolean? = false) {
         }
         composable(EasyMeetScreens.CreateEventScreen.name) {
             val eventViewModel = hiltViewModel<EventViewModel>()
-            CreateEventScreen(navController,eventViewModel)
+            CreateEventScreen(navController, eventViewModel)
         }
         composable(EasyMeetScreens.DetailEventScreen.name) {
             EventDetailScreen(navController)

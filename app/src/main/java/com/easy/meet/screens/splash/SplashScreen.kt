@@ -1,6 +1,5 @@
 package com.easy.meet.screens.splash
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,10 +31,10 @@ fun SplashScreen(navController: NavController = NavController(LocalContext.curre
 
         LaunchedEffect(Unit) {
             delay(2000L)
-            if(FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()){
+            if (FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()) {
                 navController.navigate(EasyMeetScreens.LoginScreen.name)
 
-            }else{
+            } else {
                 navController.navigate(EasyMeetScreens.HomeScreen.name)
             }
         }
@@ -44,7 +43,11 @@ fun SplashScreen(navController: NavController = NavController(LocalContext.curre
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ShowAppImage(image = R.drawable.app_image, modifier = Modifier.padding(5.dp), tint = Color.White)
+            ShowAppImage(
+                image = R.drawable.app_image,
+                modifier = Modifier.padding(5.dp),
+                tint = Color.White
+            )
         }
 
     }

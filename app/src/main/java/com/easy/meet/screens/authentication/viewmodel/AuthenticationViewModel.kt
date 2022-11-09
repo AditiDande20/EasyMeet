@@ -1,10 +1,13 @@
 package com.easy.meet.screens.authentication.viewmodel
 
-import android.util.Log
+import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.easy.meet.models.User
-import com.easy.meet.screens.authentication.repository.UserRepository
+import com.easy.meet.service.FirestoreService
+import com.easy.meet.utils.Constant
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -13,16 +16,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthenticationViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+class AuthenticationViewModel @Inject constructor(val context: Context) : ViewModel() {
     private var auth: FirebaseAuth = Firebase.auth
+    private val _userData = MutableLiveData<User>()
+    val userData: LiveData<User> = _userData
 
     init {
         auth = Firebase.auth
     }
 
-    fun insertUser(user: User)  {
+    fun insertUser(user: User) {
         viewModelScope.launch {
-            userRepository.insertUser(user)
+            FirestoreService.insertDataToFirestore(context,Constant.USER_TABLE,user)
         }
     }
 

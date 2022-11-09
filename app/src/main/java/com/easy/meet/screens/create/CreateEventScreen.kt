@@ -1,17 +1,20 @@
 package com.easy.meet.screens.create
 
+import android.os.Build
 import android.util.Log
+import android.widget.DatePicker
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,10 +22,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import com.easy.meet.R
 import com.easy.meet.components.*
@@ -30,7 +31,10 @@ import com.easy.meet.models.Event
 import com.easy.meet.screens.create.viewmodel.EventViewModel
 import com.easy.meet.utils.Constant
 import com.easy.meet.utils.Utils
+import com.squaredem.composecalendar.ComposeCalendar
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CreateEventScreen(navController: NavController, eventViewModel: EventViewModel) {
     Surface {
@@ -50,6 +54,7 @@ fun CreateEventScreen(navController: NavController, eventViewModel: EventViewMod
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ShowCreatePage(eventViewModel: EventViewModel) {
 
@@ -124,7 +129,12 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
                 .fillMaxWidth(),
             color = Color.Black
         )
-        DatePickerView()
+
+        //DatePickerView()
+
+        DatePickerCompose{
+            Log.e("Aditi====>", "date  :: $it")
+        }
 
         BorderButton(
             text = stringResource(id = R.string.createEvent), modifier = Modifier
@@ -133,11 +143,11 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
                 .wrapContentWidth()
                 .align(CenterHorizontally)
         ) {
-            flag.value=true
+            flag.value = true
             saveEvent(eventName, eventDescription, eventPlace, eventViewModel)
         }
 
-        if(flag.value){
+        if (flag.value) {
             GenerateEventLink(eventViewModel)
         }
 
@@ -152,23 +162,22 @@ private fun saveEvent(
     eventViewModel: EventViewModel
 ) {
     val event = Event(
-        id = null,
         title = eventName.value,
         description = eventDescription.value,
         place = eventPlace.value,
         status = Constant.UNCONFIRMED,
         link = "",
         final_date = "",
-        created_at = Utils.getCurrentDateTime()
+        created_at = Utils.getCurrentDateTime(),
+        event_dates = emptyList()
     )
 
     eventViewModel.insertEvent(event)
 }
 
 @Composable
-fun GenerateEventLink(eventViewModel: EventViewModel){
+fun GenerateEventLink(eventViewModel: EventViewModel) {
     val id by eventViewModel.state.collectAsState()
-    Log.e("Aditi===>", "after insert in save event function:: $id")
 
     val image =
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9RvF3ix5DRfZmehI-Z4ZabBDJg1xt6eel8w&usqp=CAU"

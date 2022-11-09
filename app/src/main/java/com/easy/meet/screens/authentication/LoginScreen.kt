@@ -1,7 +1,5 @@
 package com.easy.meet.screens.authentication
 
-import android.util.Log
-import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,11 +31,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.easy.meet.R
 import com.easy.meet.components.*
-import com.easy.meet.entities.UserEntity
 import com.easy.meet.models.User
 import com.easy.meet.navigation.EasyMeetScreens
 import com.easy.meet.screens.authentication.viewmodel.AuthenticationViewModel
@@ -68,7 +64,6 @@ fun LoginScreen(navController: NavController, authenticationViewModel: Authentic
                             val id = Utils.getCurrentUserID()
                             val user = User(id,name,email,password,createdDate,createdDate)
                             authenticationViewModel.insertUser(user)
-                            showToast(context,"Sign Up Successful")
                             navController.navigate(EasyMeetScreens.HomeScreen.name)
                         }
                     }
