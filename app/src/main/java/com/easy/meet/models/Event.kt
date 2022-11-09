@@ -1,7 +1,7 @@
 package com.easy.meet.models
 
 data class Event(
-  val id : Int = 1,
+  val id : Int?,
   val title : String,
   val description : String?,
   val status : String,

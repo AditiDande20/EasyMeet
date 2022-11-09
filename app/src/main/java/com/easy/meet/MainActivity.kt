@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
 
                     when {
                         uri.toString().contains("event") -> {
-                            val eventID = path.toInt()
+                            val eventID = path.toLong()
                             Log.e("Aditi===>", "event ID from dynamic link::$eventID")
 
                         }

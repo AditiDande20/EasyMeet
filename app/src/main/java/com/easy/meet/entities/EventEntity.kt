@@ -9,7 +9,7 @@ import com.easy.meet.utils.Constant
 data class EventEntity(
     @NonNull
     @PrimaryKey(autoGenerate = true)
-    val id : Int,
+    val id : Int = 1 ,
     @NonNull
     val title : String,
     val description : String?,

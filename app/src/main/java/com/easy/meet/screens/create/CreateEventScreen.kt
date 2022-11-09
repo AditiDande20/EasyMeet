@@ -10,9 +10,8 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import com.easy.meet.R
 import com.easy.meet.components.*
@@ -56,8 +56,8 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
     val eventName = remember { mutableStateOf("") }
     val eventDescription = remember { mutableStateOf("") }
     val eventPlace = remember { mutableStateOf("") }
+    val flag = remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
-    var link = ""
 
     Column(
         modifier = Modifier
@@ -133,37 +133,52 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
                 .wrapContentWidth()
                 .align(CenterHorizontally)
         ) {
-
-            val image ="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9RvF3ix5DRfZmehI-Z4ZabBDJg1xt6eel8w&usqp=CAU"
-            eventViewModel.generateSharingLink(
-                deepLink = "${Constant.DYNAMIC_LINK_DOMAIN}/?event/${1}".toUri(),
-                previewImageLink = image.toUri()
-            ) { generatedLink ->
-                // Use this generated Link to share via Intent
-                Log.e("Aditi === >", "generatedLink :: $generatedLink")
-                link = generatedLink
-            }
-
-            val event = Event(
-                title = eventName.value,
-                description = eventDescription.value,
-                place = eventPlace.value,
-                status = Constant.UNCONFIRMED,
-                link = link,
-                final_date = "",
-                created_at = Utils.getCurrentDateTime()
-            )
-            val id = eventViewModel.insertEvent(event)
-
-
+            flag.value=true
+            saveEvent(eventName, eventDescription, eventPlace, eventViewModel)
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        SelectionContainer(modifier = Modifier.fillMaxWidth()) {
-            Text(text = "https://easymeet.page.link?si=https%3A%2F%2Fencrypted-tbn0.gstatic.com%2Fimages%3Fq%3Dtbn%3AANd9GcT9RvF3ix5DRfZmehI-Z4ZabBDJg1xt6eel8w%26usqp%3DCAU&apn=com.easy.meet&link=https%3A%2F%2Feasymeet.page.link%2F%3Fevent%2F1")
+        if(flag.value){
+            GenerateEventLink(eventViewModel)
         }
 
+    }
+}
+
+
+private fun saveEvent(
+    eventName: MutableState<String>,
+    eventDescription: MutableState<String>,
+    eventPlace: MutableState<String>,
+    eventViewModel: EventViewModel
+) {
+    val event = Event(
+        id = null,
+        title = eventName.value,
+        description = eventDescription.value,
+        place = eventPlace.value,
+        status = Constant.UNCONFIRMED,
+        link = "",
+        final_date = "",
+        created_at = Utils.getCurrentDateTime()
+    )
+
+    eventViewModel.insertEvent(event)
+}
+
+@Composable
+fun GenerateEventLink(eventViewModel: EventViewModel){
+    val id by eventViewModel.state.collectAsState()
+    Log.e("Aditi===>", "after insert in save event function:: $id")
+
+    val image =
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9RvF3ix5DRfZmehI-Z4ZabBDJg1xt6eel8w&usqp=CAU"
+
+    eventViewModel.generateSharingLink(
+        deepLink = "${Constant.DYNAMIC_LINK_DOMAIN}/?event/${id}".toUri(),
+        previewImageLink = image.toUri()
+    ) { generatedLink ->
+        // Use this generated Link to share via Intent
+        Log.e("Aditi === >", "generatedLink :: $generatedLink")
     }
 }
 
