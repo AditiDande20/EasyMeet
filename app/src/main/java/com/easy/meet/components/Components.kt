@@ -1,11 +1,11 @@
 package com.easy.meet.components
 
 import android.app.DatePickerDialog
-import android.os.Build
+import android.util.Log
 import android.widget.DatePicker
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -43,8 +42,8 @@ import androidx.compose.ui.unit.sp
 import com.easy.meet.R
 import com.easy.meet.ui.theme.ColorPrimary
 import com.easy.meet.ui.theme.ColorPrimaryDark
+import com.easy.meet.ui.theme.QuickSand
 import com.squaredem.composecalendar.ComposeCalendar
-import java.time.LocalDate
 import java.util.*
 
 @Composable
@@ -71,7 +70,7 @@ fun ShowTitle(
         text = title,
         modifier = modifier,
         color = color,
-        style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 16.sp)
+        style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 16.sp, fontFamily = QuickSand)
     )
 }
 
@@ -93,13 +92,12 @@ fun ShowInputField(
     ) {
         TextField(
             value = value.value,
-            modifier = Modifier,
             onValueChange = { value.value = it },
             enabled = enabled,
             placeholder = {
-                Text(text = placeholder)
+                Text(text = placeholder, fontFamily = QuickSand)
             },
-            textStyle = TextStyle(fontSize = 14.sp),
+            textStyle = TextStyle(fontSize = 14.sp, fontFamily = QuickSand),
             maxLines = 1,
             singleLine = true,
             shape = RectangleShape,
@@ -266,7 +264,11 @@ fun ShowTopBar(
             Spacer(modifier = Modifier.width(40.dp))
             Text(
                 text = text, color = ColorPrimary,
-                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 25.sp)
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    fontFamily = QuickSand
+                )
             )
         }
     })
@@ -274,13 +276,13 @@ fun ShowTopBar(
 
 @Composable
 fun CreateChips(text: String) {
+    Log.e("Aditi===>","date in vchips :: "+text)
     Box(
         modifier = Modifier
-            .fillMaxWidth()
             .padding(5.dp)
             .background(
                 shape = RoundedCornerShape(10.dp),
-                color = colorResource(id = R.color.smoky_white)
+                color = ColorPrimary
             )
     ) {
         Row(
@@ -292,37 +294,42 @@ fun CreateChips(text: String) {
                 modifier = Modifier
                     .padding(2.dp)
                     .padding(5.dp)
-                    .fillMaxWidth(0.8f)
+                    .wrapContentWidth()
                     .wrapContentHeight(),
-                color = colorResource(id = R.color.dark_green),
+                color = Color.White,
                 textAlign = TextAlign.Center,
                 fontSize = 14.sp,
+                fontFamily = QuickSand,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1
-
             )
+
             Icon(
                 modifier = Modifier
+                    .padding(5.dp)
                     .size(20.dp)
                     .align(CenterVertically)
                     .clickable { },
                 imageVector = Icons.Default.Close,
+                tint = Color.White,
                 contentDescription = null
             )
         }
     }
-
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ShowChipGroup(chipList: MutableList<String>) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 100.dp),
-        modifier = Modifier.fillMaxWidth(0.90f)
+        columns = GridCells.Adaptive(minSize = 118.dp),
+        modifier = Modifier
+            .height(200.dp)
     ) {
         items(chipList.size) { chipDate ->
-            CreateChips(chipList[chipDate])
+            if(chipList[chipDate].isNotEmpty() && chipList[chipDate].isNotBlank()){
+                CreateChips(chipList[chipDate])
+            }
         }
     }
 }
@@ -594,22 +601,27 @@ fun ShowButtonIcons(image: ImageVector) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DatePickerCompose(onDone : (String) -> Unit) {
-    val showDialog = rememberSaveable { mutableStateOf(false) }
+fun DatePickerCompose(onClose: () -> Unit, onDone: (String) -> Unit) {
+    ComposeCalendar(
+        onDone = {
+            val date = "${it.dayOfMonth}-${
+                it.month.toString().capitalizeWords().slice(0..2)
+            }-${it.year.toString().slice(2 .. 3)} ${it.dayOfWeek.toString().capitalizeWords().slice(0..2)}"
+            onDone(date)
+            onClose.invoke()
+        },
+        onDismiss = {
+            onClose.invoke()
+        }
+    )
+}
 
-    if (showDialog.value) {
-        ComposeCalendar(
-            onDone = {
-                showDialog.value = false
-                val date = "${it.dayOfMonth}/${it.month}/${it.year}"
-                onDone(date)
-            },
-            onDismiss = {
-                showDialog.value = false
-            }
-        )
+fun String.capitalizeWords(): String = split(" ").joinToString(" ") { it1 ->
+    it1.replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(
+            Locale.getDefault()
+        ) else it.toString()
     }
 }
 

@@ -25,4 +25,5 @@
     <string name="comments">Comments</string>
     <string name="schedule">Schedule Dates</string>
     <string name="save">Save</string>
+    <string name="expectedDatesDescription">Add your expected or estimated date(s) of the event by clicking on above Add Dates</string>
 </resources>
