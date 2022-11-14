@@ -1,11 +1,13 @@
 package com.easy.meet.components
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.util.Log
 import android.widget.DatePicker
+import android.widget.TimePicker
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
@@ -43,6 +45,7 @@ import com.easy.meet.R
 import com.easy.meet.ui.theme.ColorPrimary
 import com.easy.meet.ui.theme.ColorPrimaryDark
 import com.easy.meet.ui.theme.QuickSand
+import com.easy.meet.utils.Utils
 import com.squaredem.composecalendar.ComposeCalendar
 import java.util.*
 
@@ -276,44 +279,73 @@ fun ShowTopBar(
 
 @Composable
 fun CreateChips(text: String) {
-    Log.e("Aditi===>","date in vchips :: "+text)
     Box(
         modifier = Modifier
-            .padding(5.dp)
+            .padding(top = 10.dp, start = 1.dp, end = 1.dp)
+            .wrapContentWidth()
             .background(
                 shape = RoundedCornerShape(10.dp),
                 color = ColorPrimary
             )
     ) {
-        Row(
-            modifier = Modifier.height(40.dp),
-            verticalAlignment = CenterVertically
+        Column(
+            modifier = Modifier
+                .wrapContentHeight()
+                .padding(start = 5.dp, end = 5.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = text,
+                text = "22",
                 modifier = Modifier
                     .padding(2.dp)
-                    .padding(5.dp)
                     .wrapContentWidth()
                     .wrapContentHeight(),
                 color = Color.White,
                 textAlign = TextAlign.Center,
-                fontSize = 14.sp,
+                fontSize = 16.sp,
+                fontFamily = QuickSand,
+                fontWeight = FontWeight.ExtraBold,
+                maxLines = 1
+            )
+
+            Text(
+                text = "NOV",
+                modifier = Modifier
+                    .padding(2.dp)
+                    .wrapContentWidth()
+                    .wrapContentHeight(),
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                fontSize = 12.sp,
+                fontFamily = QuickSand,
+                fontWeight = FontWeight.Normal,
+                maxLines = 1
+            )
+
+            Text(
+                text = "15:23",
+                modifier = Modifier
+                    .padding(2.dp)
+                    .padding(2.dp)
+                    .wrapContentWidth()
+                    .wrapContentHeight(),
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                fontSize = 12.sp,
                 fontFamily = QuickSand,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1
             )
 
-            Icon(
+            /*Icon(
                 modifier = Modifier
-                    .padding(5.dp)
                     .size(20.dp)
-                    .align(CenterVertically)
+                    .padding(2.dp)
                     .clickable { },
                 imageVector = Icons.Default.Close,
                 tint = Color.White,
                 contentDescription = null
-            )
+            )*/
         }
     }
 }
@@ -321,13 +353,9 @@ fun CreateChips(text: String) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ShowChipGroup(chipList: MutableList<String>) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 118.dp),
-        modifier = Modifier
-            .height(200.dp)
-    ) {
+    LazyRow{
         items(chipList.size) { chipDate ->
-            if(chipList[chipDate].isNotEmpty() && chipList[chipDate].isNotBlank()){
+            if (chipList[chipDate].isNotEmpty() && chipList[chipDate].isNotBlank()) {
                 CreateChips(chipList[chipDate])
             }
         }
@@ -606,8 +634,10 @@ fun DatePickerCompose(onClose: () -> Unit, onDone: (String) -> Unit) {
     ComposeCalendar(
         onDone = {
             val date = "${it.dayOfMonth}-${
-                it.month.toString().capitalizeWords().slice(0..2)
-            }-${it.year.toString().slice(2 .. 3)} ${it.dayOfWeek.toString().capitalizeWords().slice(0..2)}"
+                Utils.capitalizeWords(it.month.toString()).slice(0..2)
+            }-${it.year.toString().slice(2..3)} ${
+                Utils.capitalizeWords(it.dayOfWeek.toString()).slice(0..2)
+            }"
             onDone(date)
             onClose.invoke()
         },
@@ -617,12 +647,24 @@ fun DatePickerCompose(onClose: () -> Unit, onDone: (String) -> Unit) {
     )
 }
 
-fun String.capitalizeWords(): String = split(" ").joinToString(" ") { it1 ->
-    it1.replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(
-            Locale.getDefault()
-        ) else it.toString()
-    }
+@Composable
+fun TimePickerView(onDone: (String) -> Unit){
+    val mContext = LocalContext.current
+    val mCalendar = Calendar.getInstance()
+    val hour = mCalendar[Calendar.HOUR_OF_DAY]
+    val min = mCalendar[Calendar.MINUTE]
+
+    val mTime = remember { mutableStateOf("") }
+
+    val mTimePickerDialog = TimePickerDialog(
+        mContext,R.style.TimePicker,
+        { _: TimePicker?, mHour: Int, mMinute: Int ->
+            mTime.value = "$mHour:$mMinute"
+            onDone(mTime.value)
+        }, hour, min, false
+    )
+
+    mTimePickerDialog.show()
 }
 
 

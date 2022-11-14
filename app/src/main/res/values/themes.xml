@@ -4,4 +4,12 @@
     <style name="Theme.EasyMeet" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/dark_green</item>
     </style>
+
+    <style name="TimePicker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowIsFloating">true</item>
+        <item name="colorPrimary">@color/green</item>
+        <item name="colorPrimaryDark">@color/green_accent</item>
+        <item name="colorAccent">@color/green_accent</item>
+    </style>
+
 </resources>

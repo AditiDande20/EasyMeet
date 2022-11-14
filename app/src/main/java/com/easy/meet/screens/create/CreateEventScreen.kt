@@ -28,6 +28,7 @@ import com.easy.meet.screens.create.viewmodel.EventViewModel
 import com.easy.meet.ui.theme.QuickSand
 import com.easy.meet.utils.Constant
 import com.easy.meet.utils.Utils
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun CreateEventScreen(navController: NavController, eventViewModel: EventViewModel) {
@@ -54,15 +55,13 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
     val eventName = remember { mutableStateOf("") }
     val eventDescription = remember { mutableStateOf("") }
     val eventPlace = remember { mutableStateOf("") }
-    val flag = remember { mutableStateOf(false) }
     val showDateDialog = remember { mutableStateOf(false) }
-    val chipList = remember { mutableStateListOf("") }
-    val scrollState = rememberScrollState()
+    val eventDatesList = remember { mutableListOf("") }
 
     Column(
         modifier = Modifier
             .padding(2.dp)
-            .verticalScroll(state = scrollState)
+            .verticalScroll(rememberScrollState())
     ) {
         ShowTitle(
             title = stringResource(id = R.string.eventName),
@@ -156,12 +155,14 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
             DatePickerCompose(fun() {
                 showDateDialog.value = false
             }) {
-                chipList.add(it)
+                eventDatesList.add(it)
             }
         }
 
-        if (chipList.isNotEmpty()) {
-            ShowChipGroup(chipList = chipList)
+        if (eventDatesList.isNotEmpty()) {
+            eventDatesList.removeIf { it == "" }
+            val eventDatesChipsList = eventDatesList.distinct().toMutableList()
+            ShowChipGroup(chipList = eventDatesChipsList)
         }
 
         BorderButton(
@@ -171,42 +172,44 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
                 .wrapContentWidth()
                 .align(CenterHorizontally)
         ) {
-            flag.value = true
-            saveEvent(eventName, eventDescription, eventPlace, eventViewModel)
+            val eventId = FirebaseFirestore.getInstance().collection(Constant.EVENT_TABLE).document().id
+            saveEvent(eventDatesList,eventId,eventName, eventDescription, eventPlace, eventViewModel)
         }
-
-        if (flag.value) {
-            GenerateEventLink(eventViewModel)
-        }
-
     }
 }
 
 
 private fun saveEvent(
+    eventDatesList: MutableList<String>,
+    eventId: String,
     eventName: MutableState<String>,
     eventDescription: MutableState<String>,
     eventPlace: MutableState<String>,
     eventViewModel: EventViewModel
 ) {
-    val event = Event(
-        title = eventName.value,
-        description = eventDescription.value,
-        place = eventPlace.value,
-        status = Constant.UNCONFIRMED,
-        link = "",
-        final_date = "",
-        created_at = Utils.getCurrentDateTime(),
-        event_dates = emptyList()
-    )
+    val link = generateEventLink(eventViewModel,eventId)
+    if(link.isNotEmpty() && link.isNotBlank()){
+        val event = Event(
+            id = eventId,
+            title = eventName.value,
+            description = eventDescription.value,
+            place = eventPlace.value,
+            status = Constant.UNCONFIRMED,
+            link = link,
+            final_date = "",
+            created_at = Utils.getCurrentDateTime(),
+            event_dates = eventDatesList
+        )
 
-    eventViewModel.insertEvent(event)
+        eventViewModel.insertEvent(event)
+    }else{
+        // link not created ...show message
+    }
+
 }
 
-@Composable
-fun GenerateEventLink(eventViewModel: EventViewModel) {
-    val id by eventViewModel.state.collectAsState()
-
+fun generateEventLink(eventViewModel: EventViewModel,id : String) : String{
+    var link =""
     val image =
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9RvF3ix5DRfZmehI-Z4ZabBDJg1xt6eel8w&usqp=CAU"
 
@@ -215,8 +218,10 @@ fun GenerateEventLink(eventViewModel: EventViewModel) {
         previewImageLink = image.toUri()
     ) { generatedLink ->
         // Use this generated Link to share via Intent
+        link = generatedLink
         Log.e("Aditi === >", "generatedLink :: $generatedLink")
     }
+    return link
 }
 
 

@@ -8,16 +8,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 object FirestoreService {
 
-    fun insertDataToFirestore(context: Context, collectionName: String, data: Any) {
+    fun insertDataToFirestore(context: Context, collectionName: String, data: Any,id : String) {
         val db = FirebaseFirestore.getInstance()
-        val id: String
         try {
-            id = if(collectionName!=Constant.USER_TABLE){
-                db.collection(collectionName).document().id
-            }else{
-                Utils.getCurrentUserID()
-            }
-
             db.collection(collectionName).document(id).set(data).addOnSuccessListener {
                 Utils.showToast(context, "Saved")
             }.addOnFailureListener {

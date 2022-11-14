@@ -5,13 +5,12 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.easy.meet.models.Event
+import com.easy.meet.service.FirestoreService
 import com.easy.meet.utils.Constant
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ktx.androidParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,17 +18,11 @@ import javax.inject.Inject
 class EventViewModel @Inject constructor(val context: Context) :
     ViewModel() {
 
-    private val _state = MutableStateFlow(Long.MIN_VALUE)
-
-    val state: StateFlow<Long>
-        get() = _state
-
     fun insertEvent(event: Event) {
         viewModelScope.launch {
-
+            FirestoreService.insertDataToFirestore(context, Constant.EVENT_TABLE, event, event.id)
         }
     }
-
 
     fun generateSharingLink(
         deepLink: Uri,

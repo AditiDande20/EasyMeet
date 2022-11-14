@@ -21,7 +21,9 @@ object Utils {
         return sdf.format(Date())
     }
 
-
-
+    fun capitalizeWords(string: String): String {
+        return string.substring(0, 1).uppercase(Locale.getDefault()) + string.substring(1)
+            .lowercase(Locale.getDefault())
+    }
 
 }
