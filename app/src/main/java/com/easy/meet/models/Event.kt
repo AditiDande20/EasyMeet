@@ -2,6 +2,7 @@ package com.easy.meet.models
 
 import android.os.Parcelable
 import com.easy.meet.utils.Constant
+import com.easy.meet.utils.Utils
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.parcelize.Parcelize
 
@@ -16,6 +17,7 @@ data class Event(
     val link: String,
     val final_date: String?,
     val created_at: String,
+    val user_id: String = Utils.getCurrentUserID(),
     val event_dates: List<String>
 ) : Parcelable {
     companion object {
@@ -39,6 +41,7 @@ data class Event(
                     link,
                     finalDate,
                     createdAt,
+                    Utils.getCurrentUserID(),
                     eventDate as List<String>
                 )
             } catch (e: Exception) {

@@ -11,7 +11,8 @@ object FirestoreService {
     fun insertDataToFirestore(context: Context, collectionName: String, data: Any,id : String) {
         val db = FirebaseFirestore.getInstance()
         try {
-            db.collection(collectionName).document(id).set(data).addOnSuccessListener {
+            db.collection(collectionName).document(id).set(data
+            ).addOnSuccessListener {
                 Utils.showToast(context, "Saved")
             }.addOnFailureListener {
                 Utils.showToast(context, "Failure")

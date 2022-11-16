@@ -12,8 +12,11 @@
     <string name="signUp">Sign Up</string>
     <string name="image">Image</string>
     <string name="eventName">Event Name</string>
+    <string name="eventNamePlaceholder">"Give a title to your event"</string>
     <string name="eventDescription">Event Description</string>
+    <string name="eventDescriptionPlaceholder">Tell everyone more about the event</string>
     <string name="eventPlace">Event Place</string>
+    <string name="eventPlacePlaceholder">Decide a place to host the event</string>
     <string name="addDate">Add Dates</string>
     <string name="createEvent">Create Event</string>
     <string name="attendingEvents">Attending Events</string>
@@ -26,4 +29,5 @@
     <string name="schedule">Schedule Dates</string>
     <string name="save">Save</string>
     <string name="expectedDatesDescription">Add your expected or estimated date(s) of the event by clicking on above Add Dates</string>
+    <string name="deleteDatesDescription">Tap on the selected date to delete.</string>
 </resources>

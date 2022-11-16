@@ -8,8 +8,6 @@ import android.widget.TimePicker
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -278,15 +276,25 @@ fun ShowTopBar(
 }
 
 @Composable
-fun CreateChips(text: String) {
+fun CreateChips(date: String,onRemove: (String) -> Unit) {
+
+    val time = date.split(" ")[2]
+    val day = date.split(" ")[0].substringBefore("-")
+    val month = date.split(" ")[0].substringAfter("-").slice(0..2)
+
     Box(
         modifier = Modifier
-            .padding(top = 10.dp, start = 1.dp, end = 1.dp)
+            .padding(top = 10.dp, start = 2.dp, end = 2.dp)
+            .padding(3.dp)
             .wrapContentWidth()
             .background(
                 shape = RoundedCornerShape(10.dp),
                 color = ColorPrimary
             )
+            .clickable{
+                Log.e("Aditi==>","CreateChips remove :: $date")
+                onRemove.invoke(date)
+            }
     ) {
         Column(
             modifier = Modifier
@@ -295,7 +303,7 @@ fun CreateChips(text: String) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "22",
+                text = day,
                 modifier = Modifier
                     .padding(2.dp)
                     .wrapContentWidth()
@@ -309,7 +317,7 @@ fun CreateChips(text: String) {
             )
 
             Text(
-                text = "NOV",
+                text = month,
                 modifier = Modifier
                     .padding(2.dp)
                     .wrapContentWidth()
@@ -323,7 +331,7 @@ fun CreateChips(text: String) {
             )
 
             Text(
-                text = "15:23",
+                text = time,
                 modifier = Modifier
                     .padding(2.dp)
                     .padding(2.dp)
@@ -352,70 +360,15 @@ fun CreateChips(text: String) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShowChipGroup(chipList: MutableList<String>) {
-    LazyRow{
-        items(chipList.size) { chipDate ->
-            if (chipList[chipDate].isNotEmpty() && chipList[chipDate].isNotBlank()) {
-                CreateChips(chipList[chipDate])
+fun ShowChipGroup(dateChipList: MutableList<String>,onRemove: (String) -> Unit) {
+    LazyRow {
+        items(dateChipList.size) { chipDate ->
+            if (dateChipList[chipDate].isNotEmpty() && dateChipList[chipDate].isNotBlank()) {
+                CreateChips(dateChipList[chipDate]){
+                    Log.e("Aditi==>","ShowChipGroup remove :: $it")
+                    onRemove.invoke(it)
+                }
             }
-        }
-    }
-}
-
-@Composable
-fun DatePickerView() {
-    val mContext = LocalContext.current
-    val mCalendar = Calendar.getInstance()
-    val year = mCalendar.get(Calendar.YEAR)
-    val month = mCalendar.get(Calendar.MONTH)
-    val day = mCalendar.get(Calendar.DAY_OF_MONTH)
-
-    val chipList = remember {
-        mutableListOf<String>()
-    }
-
-    mCalendar.time = Date()
-    val mDate = remember { mutableStateOf("") }
-    val mDatePickerDialog = DatePickerDialog(
-        mContext,
-        { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-            mDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
-        }, year, month, day
-    )
-
-    Box(
-        modifier = Modifier
-            .height(100.dp)
-            .padding(start = 20.dp, top = 2.dp, bottom = 10.dp, end = 20.dp)
-            .border(0.5.dp, MaterialTheme.colors.onSurface.copy(alpha = 0.5f))
-
-    ) {
-
-        Row(verticalAlignment = CenterVertically) {
-            if (mDate.value.isNotEmpty()) {
-                chipList.add(mDate.value)
-                ShowChipGroup(chipList)
-            } else {
-                Text(
-                    text = "Add Dates",
-                    color = colorResource(id = R.color.dark_green),
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth(0.9f),
-
-                    )
-            }
-
-            Icon(
-                imageVector = Icons.Default.DateRange,
-                contentDescription = null,
-                modifier = Modifier
-                    .clickable {
-                        mDatePickerDialog.show()
-                    }
-                    .size(30.dp, 30.dp),
-                tint = colorResource(id = R.color.dark_green)
-            )
         }
     }
 }
@@ -648,7 +601,7 @@ fun DatePickerCompose(onClose: () -> Unit, onDone: (String) -> Unit) {
 }
 
 @Composable
-fun TimePickerView(onDone: (String) -> Unit){
+fun TimePickerView(onClose: () -> Unit, onDone: (String) -> Unit) {
     val mContext = LocalContext.current
     val mCalendar = Calendar.getInstance()
     val hour = mCalendar[Calendar.HOUR_OF_DAY]
@@ -657,10 +610,11 @@ fun TimePickerView(onDone: (String) -> Unit){
     val mTime = remember { mutableStateOf("") }
 
     val mTimePickerDialog = TimePickerDialog(
-        mContext,R.style.TimePicker,
+        mContext, R.style.TimePicker,
         { _: TimePicker?, mHour: Int, mMinute: Int ->
             mTime.value = "$mHour:$mMinute"
             onDone(mTime.value)
+            onClose.invoke()
         }, hour, min, false
     )
 

@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.easy.meet.R
@@ -56,7 +57,9 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
     val eventDescription = remember { mutableStateOf("") }
     val eventPlace = remember { mutableStateOf("") }
     val showDateDialog = remember { mutableStateOf(false) }
-    val eventDatesList = remember { mutableListOf("") }
+    val showTimeDialog = remember { mutableStateOf(false) }
+    val eventDatesList = remember { mutableStateListOf("") }
+    val eventDates = remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -73,7 +76,7 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
 
         ShowInputField(
             value = eventName,
-            placeholder = stringResource(id = R.string.eventName),
+            placeholder = stringResource(id = R.string.eventNamePlaceholder),
             modifier = Modifier
                 .padding(start = 10.dp, top = 5.dp, bottom = 2.dp, end = 10.dp)
                 .fillMaxWidth(),
@@ -91,7 +94,7 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
 
         ShowInputField(
             value = eventDescription,
-            placeholder = stringResource(id = R.string.eventDescription),
+            placeholder = stringResource(id = R.string.eventDescriptionPlaceholder),
             modifier = Modifier
                 .padding(start = 10.dp, top = 5.dp, bottom = 2.dp, end = 10.dp)
                 .fillMaxWidth(),
@@ -109,7 +112,7 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
 
         ShowInputField(
             value = eventPlace,
-            placeholder = stringResource(id = R.string.eventPlace),
+            placeholder = stringResource(id = R.string.eventPlacePlaceholder),
             modifier = Modifier
                 .padding(start = 10.dp, top = 5.dp, bottom = 2.dp, end = 10.dp)
                 .fillMaxWidth(),
@@ -140,13 +143,17 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
             Text(text = stringResource(id = R.string.addDate), fontFamily = QuickSand)
         }
 
+
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 10.dp, top = 2.dp, bottom = 2.dp, end = 10.dp),
             maxLines = 2,
-            text = stringResource(R.string.expectedDatesDescription),
+            text = if (eventDatesList.isEmpty()) stringResource(R.string.expectedDatesDescription) else stringResource(
+                id = R.string.deleteDatesDescription
+            ),
             fontFamily = QuickSand,
+            fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color.Gray
         )
@@ -154,15 +161,28 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
         if (showDateDialog.value) {
             DatePickerCompose(fun() {
                 showDateDialog.value = false
+                showTimeDialog.value = true
             }) {
-                eventDatesList.add(it)
+                eventDates.value = it
+            }
+        }
+
+
+        if (showTimeDialog.value) {
+            TimePickerView(fun() {
+                showTimeDialog.value = false
+            }) {
+                eventDatesList.add("${eventDates.value} $it")
             }
         }
 
         if (eventDatesList.isNotEmpty()) {
             eventDatesList.removeIf { it == "" }
             val eventDatesChipsList = eventDatesList.distinct().toMutableList()
-            ShowChipGroup(chipList = eventDatesChipsList)
+            ShowChipGroup(dateChipList = eventDatesChipsList){
+                eventDatesList.remove(it)
+            }
+
         }
 
         BorderButton(
@@ -172,8 +192,16 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
                 .wrapContentWidth()
                 .align(CenterHorizontally)
         ) {
-            val eventId = FirebaseFirestore.getInstance().collection(Constant.EVENT_TABLE).document().id
-            saveEvent(eventDatesList,eventId,eventName, eventDescription, eventPlace, eventViewModel)
+            val eventId =
+                FirebaseFirestore.getInstance().collection(Constant.EVENT_TABLE).document().id
+            saveEvent(
+                eventDatesList,
+                eventId,
+                eventName,
+                eventDescription,
+                eventPlace,
+                eventViewModel
+            )
         }
     }
 }
@@ -187,8 +215,8 @@ private fun saveEvent(
     eventPlace: MutableState<String>,
     eventViewModel: EventViewModel
 ) {
-    val link = generateEventLink(eventViewModel,eventId)
-    if(link.isNotEmpty() && link.isNotBlank()){
+    val link = generateEventLink(eventViewModel, eventId)
+    if (link.isNotEmpty() && link.isNotBlank()) {
         val event = Event(
             id = eventId,
             title = eventName.value,
@@ -202,14 +230,14 @@ private fun saveEvent(
         )
 
         eventViewModel.insertEvent(event)
-    }else{
+    } else {
         // link not created ...show message
     }
 
 }
 
-fun generateEventLink(eventViewModel: EventViewModel,id : String) : String{
-    var link =""
+fun generateEventLink(eventViewModel: EventViewModel, id: String): String {
+    var link = ""
     val image =
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9RvF3ix5DRfZmehI-Z4ZabBDJg1xt6eel8w&usqp=CAU"
 
