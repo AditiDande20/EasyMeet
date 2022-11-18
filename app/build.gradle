@@ -76,7 +76,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:30.3.0')
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
-    implementation 'com.google.firebase:firebase-dynamic-links-ktx'
+    implementation 'com.google.firebase:firebase-dynamic-links-ktx:21.0.0'
 
     //Dagger - Hilt
     implementation 'com.google.dagger:hilt-android:2.39'
@@ -104,6 +104,11 @@ dependencies {
 
     //Compose Calender
     implementation 'com.squaredem:composecalendar:1.0.0'
+    
+    //Lottie
+    implementation 'com.airbnb.android:lottie-compose:4.0.0'
+
+
 
 
 

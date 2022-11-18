@@ -63,7 +63,9 @@ fun LoginScreen(navController: NavController, authenticationViewModel: Authentic
                         authenticationViewModel.createUserWithEmailPassword(email,password){
                             val id = Utils.getCurrentUserID()
                             val user = User(id,name,email,password,createdDate,createdDate)
-                            authenticationViewModel.insertUser(user)
+                            authenticationViewModel.insertUser(user){
+
+                            }
                             navController.navigate(EasyMeetScreens.HomeScreen.name)
                         }
                     }

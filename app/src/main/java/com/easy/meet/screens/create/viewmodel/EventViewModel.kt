@@ -2,6 +2,7 @@ package com.easy.meet.screens.create.viewmodel
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.easy.meet.models.Event
@@ -18,9 +19,12 @@ import javax.inject.Inject
 class EventViewModel @Inject constructor(val context: Context) :
     ViewModel() {
 
-    fun insertEvent(event: Event) {
+    fun insertEvent(event: Event,onDone : (String) -> Unit) {
         viewModelScope.launch {
-            FirestoreService.insertDataToFirestore(context, Constant.EVENT_TABLE, event, event.id)
+            FirestoreService.insertDataToFirestore(context, Constant.EVENT_TABLE, event, event.id){
+                Log.e("Aditi===>","EventViewModel in onDone :: ")
+                onDone(it)
+            }
         }
     }
 
@@ -49,7 +53,9 @@ class EventViewModel @Inject constructor(val context: Context) :
             it.addOnSuccessListener { dynamicLink ->
                 getShareableLink.invoke(dynamicLink.shortLink.toString())
             }
-            it.addOnFailureListener {
+            it.addOnFailureListener {e ->
+                Log.e("Aditi===>"," link exception :: $e")
+
                 // This lambda will be triggered when short link generation failed due to an exception
                 // Handle
             }

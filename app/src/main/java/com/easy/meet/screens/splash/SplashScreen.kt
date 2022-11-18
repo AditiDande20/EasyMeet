@@ -17,6 +17,7 @@ import androidx.navigation.NavController
 import com.easy.meet.R
 import com.easy.meet.components.ShowAppImage
 import com.easy.meet.navigation.EasyMeetScreens
+import com.easy.meet.ui.theme.ColorPrimary
 import com.easy.meet.ui.theme.ColorPrimaryDark
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
@@ -26,7 +27,7 @@ import kotlinx.coroutines.delay
 fun SplashScreen(navController: NavController = NavController(LocalContext.current)) {
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = ColorPrimaryDark
+        color = ColorPrimary
     ) {
 
         LaunchedEffect(Unit) {

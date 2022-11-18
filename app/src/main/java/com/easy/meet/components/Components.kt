@@ -20,10 +20,13 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -39,7 +42,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.compose.*
 import com.easy.meet.R
+import com.easy.meet.ui.theme.ColorAccent
 import com.easy.meet.ui.theme.ColorPrimary
 import com.easy.meet.ui.theme.ColorPrimaryDark
 import com.easy.meet.ui.theme.QuickSand
@@ -106,7 +111,7 @@ fun ShowInputField(
             keyboardActions = onActions,
             trailingIcon = { if (passwordVisibility != null) PasswordVisibility(passwordVisibility = passwordVisibility) },
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White,
+                backgroundColor = White,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
@@ -142,8 +147,8 @@ fun InputField(
         keyboardActions = onActions,
         trailingIcon = { if (iconVisibility) Icons.Default.DateRange },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            backgroundColor = Color.White,
-            focusedBorderColor = colorResource(id = R.color.dark_green),
+            backgroundColor = White,
+            focusedBorderColor = ColorPrimary,
             unfocusedBorderColor = Color.Gray,
         )
     )
@@ -276,7 +281,7 @@ fun ShowTopBar(
 }
 
 @Composable
-fun CreateChips(date: String,onRemove: (String) -> Unit) {
+fun CreateChips(date: String, onRemove: (String) -> Unit) {
 
     val time = date.split(" ")[2]
     val day = date.split(" ")[0].substringBefore("-")
@@ -291,8 +296,8 @@ fun CreateChips(date: String,onRemove: (String) -> Unit) {
                 shape = RoundedCornerShape(10.dp),
                 color = ColorPrimary
             )
-            .clickable{
-                Log.e("Aditi==>","CreateChips remove :: $date")
+            .clickable {
+                Log.e("Aditi==>", "CreateChips remove :: $date")
                 onRemove.invoke(date)
             }
     ) {
@@ -308,7 +313,7 @@ fun CreateChips(date: String,onRemove: (String) -> Unit) {
                     .padding(2.dp)
                     .wrapContentWidth()
                     .wrapContentHeight(),
-                color = Color.White,
+                color = White,
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp,
                 fontFamily = QuickSand,
@@ -322,7 +327,7 @@ fun CreateChips(date: String,onRemove: (String) -> Unit) {
                     .padding(2.dp)
                     .wrapContentWidth()
                     .wrapContentHeight(),
-                color = Color.White,
+                color = White,
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp,
                 fontFamily = QuickSand,
@@ -337,7 +342,7 @@ fun CreateChips(date: String,onRemove: (String) -> Unit) {
                     .padding(2.dp)
                     .wrapContentWidth()
                     .wrapContentHeight(),
-                color = Color.White,
+                color = White,
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp,
                 fontFamily = QuickSand,
@@ -360,12 +365,11 @@ fun CreateChips(date: String,onRemove: (String) -> Unit) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShowChipGroup(dateChipList: MutableList<String>,onRemove: (String) -> Unit) {
+fun ShowChipGroup(dateChipList: MutableList<String>, onRemove: (String) -> Unit) {
     LazyRow {
         items(dateChipList.size) { chipDate ->
             if (dateChipList[chipDate].isNotEmpty() && dateChipList[chipDate].isNotBlank()) {
-                CreateChips(dateChipList[chipDate]){
-                    Log.e("Aditi==>","ShowChipGroup remove :: $it")
+                CreateChips(dateChipList[chipDate]) {
                     onRemove.invoke(it)
                 }
             }
@@ -388,12 +392,12 @@ fun BorderButton(
             disabledElevation = 0.dp
         ),
         modifier = modifier,
-        border = BorderStroke(1.dp, colorResource(id = R.color.dark_green)),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.dark_green))
+        border = BorderStroke(1.dp, ColorPrimary),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = ColorPrimary)
     ) {
         Text(
             text = text,
-            color = colorResource(id = R.color.dark_green),
+            color = ColorPrimary,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp
         )
@@ -444,7 +448,7 @@ fun ListLayout(
             .wrapContentHeight()
             .clickable { onClick.invoke() },
         elevation = 10.dp,
-        backgroundColor = Color.White
+        backgroundColor = White
     ) {
         Column(
             modifier = Modifier
@@ -498,7 +502,7 @@ fun ListLayout(
                         .padding(1.dp),
                     border = BorderStroke(
                         width = 1.dp,
-                        color = if (eventStatus == "Confirmed") Color.Green else Color.Red
+                        color = if (eventStatus == "Confirmed") ColorPrimary else ColorAccent
                     )
                 ) {
                     Text(
@@ -507,7 +511,7 @@ fun ListLayout(
                         fontSize = 14.sp,
                         maxLines = 1,
                         textAlign = TextAlign.Center,
-                        color = if (eventStatus == "Confirmed") Color.Green else Color.Red,
+                        color = if (eventStatus == "Confirmed") ColorPrimary else ColorAccent,
                         modifier = Modifier
                             .padding(2.dp)
                             .padding(2.dp)
@@ -576,7 +580,7 @@ fun ShowButtonIcons(image: ImageVector) {
             Icon(
                 imageVector = image,
                 contentDescription = null,
-                tint = Color.White
+                tint = White
             )
         }
     }
@@ -619,6 +623,60 @@ fun TimePickerView(onClose: () -> Unit, onDone: (String) -> Unit) {
     )
 
     mTimePickerDialog.show()
+}
+
+@Composable
+fun ShowProgressDialog(modifier: Modifier, title: String, description: String) {
+    val isPlaying by remember { mutableStateOf(true) }
+    val speed by remember { mutableStateOf(1f) }
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.event))
+    val progress by animateLottieCompositionAsState(
+        composition,
+        iterations = LottieConstants.IterateForever,
+        isPlaying = isPlaying,
+        speed = speed,
+        restartOnPlay = false
+    )
+
+    Box(
+        contentAlignment = Center,
+        modifier = Modifier
+            .background(Transparent, shape = RoundedCornerShape(8.dp))
+    ) {
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            LottieAnimation(
+                composition,
+                progress,
+                modifier = Modifier.size(100.dp)
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = title,
+                fontFamily = QuickSand,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = White,
+                maxLines = 1
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = description,
+                fontFamily = QuickSand,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                color = White,
+                maxLines = 3
+            )
+        }
+    }
 }
 
 

@@ -26,6 +26,7 @@ import com.easy.meet.R
 import com.easy.meet.navigation.EasyMeetScreens
 import com.easy.meet.navigation.bottomNavigation.BottomNavigations
 import com.easy.meet.navigation.bottomNavigation.bottomNavigationItems
+import com.easy.meet.ui.theme.ColorPrimary
 
 @ExperimentalComposeUiApi
 @Composable
@@ -55,7 +56,8 @@ fun HomeScreen(nvController: NavController) {
                         nvController.navigate(EasyMeetScreens.CreateEventScreen.name)
                     },
                     shape = CircleShape,
-                    contentColor = Color.White
+                    contentColor = Color.White,
+                    backgroundColor = ColorPrimary
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -94,7 +96,7 @@ fun BottomNav(navController: NavController) {
                             imageVector = screen.icon,
                             contentDescription = "",
                             modifier = Modifier.size(35.dp),
-                            tint = if (selected) colorResource(id = R.color.dark_green) else Color.Gray.copy(
+                            tint = if (selected) ColorPrimary else Color.Gray.copy(
                                 alpha = 0.4f
                             )
                         )
@@ -105,7 +107,7 @@ fun BottomNav(navController: NavController) {
                         Text(
                             text = it,
                             style = MaterialTheme.typography.caption,
-                            color = if (selected) colorResource(id = R.color.dark_green) else Color.Gray.copy(
+                            color = if (selected) ColorPrimary else Color.Gray.copy(
                                 alpha = 0.4f
                             )
                         )
@@ -113,7 +115,7 @@ fun BottomNav(navController: NavController) {
                 },
                 selected = selected,
 
-                selectedContentColor = Color(R.color.dark_green),
+                selectedContentColor = ColorPrimary,
                 unselectedContentColor = Color.White.copy(alpha = 0.4f),
                 onClick = {
                     screen.route?.let { it1 ->

@@ -20,9 +20,11 @@ import javax.inject.Inject
 class AuthenticationViewModel @Inject constructor(val context: Context) : ViewModel() {
     private var auth: FirebaseAuth = Firebase.auth
 
-    fun insertUser(user: User) {
+    fun insertUser(user: User,onDone : (String) -> Unit) {
         viewModelScope.launch {
-            FirestoreService.insertDataToFirestore(context,Constant.USER_TABLE,user,Utils.getCurrentUserID())
+            FirestoreService.insertDataToFirestore(context,Constant.USER_TABLE,user,Utils.getCurrentUserID()) {
+                onDone(it)
+            }
         }
     }
 

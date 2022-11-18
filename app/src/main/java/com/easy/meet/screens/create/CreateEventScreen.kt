@@ -12,7 +12,9 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -20,6 +22,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.easy.meet.R
@@ -60,6 +64,11 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
     val showTimeDialog = remember { mutableStateOf(false) }
     val eventDatesList = remember { mutableStateListOf("") }
     val eventDates = remember { mutableStateOf("") }
+    var showProgressDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
+
 
     Column(
         modifier = Modifier
@@ -179,7 +188,7 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
         if (eventDatesList.isNotEmpty()) {
             eventDatesList.removeIf { it == "" }
             val eventDatesChipsList = eventDatesList.distinct().toMutableList()
-            ShowChipGroup(dateChipList = eventDatesChipsList){
+            ShowChipGroup(dateChipList = eventDatesChipsList) {
                 eventDatesList.remove(it)
             }
 
@@ -192,6 +201,7 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
                 .wrapContentWidth()
                 .align(CenterHorizontally)
         ) {
+            showProgressDialog = true
             val eventId =
                 FirebaseFirestore.getInstance().collection(Constant.EVENT_TABLE).document().id
             saveEvent(
@@ -201,11 +211,35 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
                 eventDescription,
                 eventPlace,
                 eventViewModel
-            )
+            ) {
+                Log.e("Aditi===>","after insert :: $it")
+                showProgressDialog=false
+                if (it == Constant.SUCCESS) {
+                    Utils.showToast(context, "Event Added !!!")
+                } else {
+                    Utils.showSnackBar(scaffoldState, coroutineScope, "Something went wrong")
+                }
+            }
         }
+
+        if (showProgressDialog) {
+            Dialog(
+                onDismissRequest = { showProgressDialog = false },
+                DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+            ) {
+                ShowProgressDialog(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(10.dp),
+                    title = "PLEASE WAIT ...",
+                    description = "Saving the events details"
+                )
+            }
+        }
+
     }
 }
-
 
 private fun saveEvent(
     eventDatesList: MutableList<String>,
@@ -213,9 +247,10 @@ private fun saveEvent(
     eventName: MutableState<String>,
     eventDescription: MutableState<String>,
     eventPlace: MutableState<String>,
-    eventViewModel: EventViewModel
+    eventViewModel: EventViewModel, onDone: (String) -> Unit
 ) {
     val link = generateEventLink(eventViewModel, eventId)
+
     if (link.isNotEmpty() && link.isNotBlank()) {
         val event = Event(
             id = eventId,
@@ -229,8 +264,12 @@ private fun saveEvent(
             event_dates = eventDatesList
         )
 
-        eventViewModel.insertEvent(event)
+        eventViewModel.insertEvent(event) {
+            Log.e("Aditi===>","saveEvent in onDone :: $link")
+            onDone(it)
+        }
     } else {
+        Log.e("Aditi===>","saveEvent else :: $link")
         // link not created ...show message
     }
 
@@ -249,6 +288,9 @@ fun generateEventLink(eventViewModel: EventViewModel, id: String): String {
         link = generatedLink
         Log.e("Aditi === >", "generatedLink :: $generatedLink")
     }
+
+    Log.e("Aditi===>","final link :: $link")
+
     return link
 }
 
