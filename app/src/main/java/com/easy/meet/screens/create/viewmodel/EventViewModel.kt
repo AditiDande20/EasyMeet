@@ -1,17 +1,17 @@
 package com.easy.meet.screens.create.viewmodel
 
 import android.content.Context
-import android.net.Uri
-import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.easy.meet.models.Event
-import com.easy.meet.service.FirestoreService
+import com.easy.meet.service.FireStoreService
 import com.easy.meet.utils.Constant
 import com.google.firebase.dynamiclinks.DynamicLink
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
-import com.google.firebase.dynamiclinks.ktx.androidParameters
+import com.google.firebase.dynamiclinks.ktx.*
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,21 +19,59 @@ import javax.inject.Inject
 class EventViewModel @Inject constructor(val context: Context) :
     ViewModel() {
 
-    fun insertEvent(event: Event,onDone : (String) -> Unit) {
+    private val job = Job()
+
+
+    fun insertEvent(event: Event, onDone: (String) -> Unit) {
         viewModelScope.launch {
-            FirestoreService.insertDataToFirestore(context, Constant.EVENT_TABLE, event, event.id){
-                Log.e("Aditi===>","EventViewModel in onDone :: ")
+            generateSharingLink(event.id) {
+                if (it.isNotBlank() && it.isNotEmpty()) {
+                    event.link = it
+                }
+            }
+            job.join()
+            FireStoreService.insertDataToFireStore(context, Constant.EVENT_TABLE, event, event.id) {
                 onDone(it)
             }
         }
     }
 
-    fun generateSharingLink(
-        deepLink: Uri,
-        previewImageLink: Uri,
+    private fun generateSharingLink(
+        id: String,
         getShareableLink: (String) -> Unit = {},
     ) {
-        FirebaseDynamicLinks.getInstance().createDynamicLink().run {
+
+        val image =
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9RvF3ix5DRfZmehI-Z4ZabBDJg1xt6eel8w&usqp=CAU"
+        val dynamicLink = Firebase.dynamicLinks.dynamicLink {
+            link = "${Constant.DYNAMIC_LINK_DOMAIN}/?event/${id}".toUri()
+            domainUriPrefix = Constant.DYNAMIC_LINK_DOMAIN
+            androidParameters {
+                build()
+            }
+            setSocialMetaTagParameters(
+                DynamicLink.SocialMetaTagParameters.Builder()
+                    .setImageUrl(image.toUri())
+                    .build()
+            )
+        }
+
+        val dynamicLinkUri = dynamicLink.uri
+
+        //getShareableLink.invoke(dynamicLinkUri.toString())
+
+        Firebase.dynamicLinks.shortLinkAsync {
+            longLink = dynamicLinkUri
+        }.addOnSuccessListener { (shortLink, _) ->
+            getShareableLink.invoke(shortLink.toString())
+            job.complete()
+        }.addOnFailureListener {
+            // Error
+            // ...
+            job.complete()
+        }
+
+        /*FirebaseDynamicLinks.getInstance().createDynamicLink().run {
             link = deepLink
 
             domainUriPrefix = Constant.DYNAMIC_LINK_DOMAIN
@@ -59,7 +97,7 @@ class EventViewModel @Inject constructor(val context: Context) :
                 // This lambda will be triggered when short link generation failed due to an exception
                 // Handle
             }
-        }
+        }*/
     }
 
 

@@ -28,7 +28,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun getDynamicLinks() {
-        Log.e("Aditi===>","getDynamicLinks")
         FirebaseDynamicLinks.getInstance()
             .getDynamicLink(intent)
             .addOnSuccessListener(this@MainActivity) { pendingDynamicLinkData ->

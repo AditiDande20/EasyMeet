@@ -14,7 +14,7 @@ data class Event(
     val description: String?,
     val status: String,
     val place: String?,
-    val link: String,
+    var link: String,
     val final_date: String?,
     val created_at: String,
     val user_id: String = Utils.getCurrentUserID(),

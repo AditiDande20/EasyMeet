@@ -1,27 +1,30 @@
 package com.easy.meet.service
 
 import android.content.Context
-import android.util.Log
 import com.easy.meet.utils.Constant
 import com.easy.meet.utils.Utils
 import com.google.firebase.firestore.FirebaseFirestore
 
-object FirestoreService {
+object FireStoreService {
 
-    fun insertDataToFirestore(context: Context, collectionName: String, data: Any,id : String,onDone: (String) -> Unit) {
+    fun insertDataToFireStore(
+        context: Context,
+        collectionName: String,
+        data: Any,
+        id: String,
+        onDone: (String) -> Unit
+    ) {
+
         val db = FirebaseFirestore.getInstance()
         try {
-            db.collection(collectionName).document(id).set(data
-            ).addOnSuccessListener {
+            db.collection(collectionName).document(id).set(data).addOnSuccessListener {
                 Utils.showToast(context, "Saved")
                 onDone(Constant.SUCCESS)
             }.addOnFailureListener {
                 onDone(Constant.FAILURE)
                 Utils.showToast(context, "Failure")
-                Log.e("Aditi === >","error ::"+it.message)
             }
         } catch (e: Exception) {
-            Log.e("Aditi === >","exception ::"+e.message)
             onDone(Constant.EXCEPTION)
         }
 

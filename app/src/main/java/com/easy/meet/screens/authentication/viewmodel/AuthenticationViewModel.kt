@@ -1,12 +1,10 @@
 package com.easy.meet.screens.authentication.viewmodel
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.easy.meet.models.User
-import com.easy.meet.service.FirestoreService
+import com.easy.meet.service.FireStoreService
 import com.easy.meet.utils.Constant
 import com.easy.meet.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
@@ -22,7 +20,7 @@ class AuthenticationViewModel @Inject constructor(val context: Context) : ViewMo
 
     fun insertUser(user: User,onDone : (String) -> Unit) {
         viewModelScope.launch {
-            FirestoreService.insertDataToFirestore(context,Constant.USER_TABLE,user,Utils.getCurrentUserID()) {
+            FireStoreService.insertDataToFireStore(context,Constant.USER_TABLE,user,Utils.getCurrentUserID()) {
                 onDone(it)
             }
         }

@@ -297,7 +297,6 @@ fun CreateChips(date: String, onRemove: (String) -> Unit) {
                 color = ColorPrimary
             )
             .clickable {
-                Log.e("Aditi==>", "CreateChips remove :: $date")
                 onRemove.invoke(date)
             }
     ) {

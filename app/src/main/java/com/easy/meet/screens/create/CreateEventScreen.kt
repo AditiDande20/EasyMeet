@@ -1,6 +1,5 @@
 package com.easy.meet.screens.create
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -12,7 +11,6 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -24,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.easy.meet.R
 import com.easy.meet.components.*
@@ -212,8 +209,7 @@ fun ShowCreatePage(eventViewModel: EventViewModel) {
                 eventPlace,
                 eventViewModel
             ) {
-                Log.e("Aditi===>","after insert :: $it")
-                showProgressDialog=false
+                showProgressDialog = false
                 if (it == Constant.SUCCESS) {
                     Utils.showToast(context, "Event Added !!!")
                 } else {
@@ -249,49 +245,24 @@ private fun saveEvent(
     eventPlace: MutableState<String>,
     eventViewModel: EventViewModel, onDone: (String) -> Unit
 ) {
-    val link = generateEventLink(eventViewModel, eventId)
 
-    if (link.isNotEmpty() && link.isNotBlank()) {
-        val event = Event(
-            id = eventId,
-            title = eventName.value,
-            description = eventDescription.value,
-            place = eventPlace.value,
-            status = Constant.UNCONFIRMED,
-            link = link,
-            final_date = "",
-            created_at = Utils.getCurrentDateTime(),
-            event_dates = eventDatesList
-        )
+    val event = Event(
+        id = eventId,
+        title = eventName.value,
+        description = eventDescription.value,
+        place = eventPlace.value,
+        status = Constant.UNCONFIRMED,
+        link = "",
+        final_date = "",
+        created_at = Utils.getCurrentDateTime(),
+        event_dates = eventDatesList
+    )
 
-        eventViewModel.insertEvent(event) {
-            Log.e("Aditi===>","saveEvent in onDone :: $link")
-            onDone(it)
-        }
-    } else {
-        Log.e("Aditi===>","saveEvent else :: $link")
-        // link not created ...show message
+    eventViewModel.insertEvent(event) {
+        onDone(it)
     }
 
-}
 
-fun generateEventLink(eventViewModel: EventViewModel, id: String): String {
-    var link = ""
-    val image =
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9RvF3ix5DRfZmehI-Z4ZabBDJg1xt6eel8w&usqp=CAU"
-
-    eventViewModel.generateSharingLink(
-        deepLink = "${Constant.DYNAMIC_LINK_DOMAIN}/?event/${id}".toUri(),
-        previewImageLink = image.toUri()
-    ) { generatedLink ->
-        // Use this generated Link to share via Intent
-        link = generatedLink
-        Log.e("Aditi === >", "generatedLink :: $generatedLink")
-    }
-
-    Log.e("Aditi===>","final link :: $link")
-
-    return link
 }
 
 
